@@ -43,7 +43,7 @@ jobs:
       - name: Deploy files to remote site
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.BS2WP_SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.FLYWHEEL_HOST }}
           REMOTE_USER: ${{ secrets.FLYWHEEL_SSH_USER }}
           ARGS: -rltgoDzvO
