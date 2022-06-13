@@ -1,0 +1,70 @@
+{
+    "name": "vmlyr/wp-kit",
+    "description": "Composer template for WordPress projects.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Jimmy Courtice",
+            "email": "jimmy.courtice@vmlyr.com"
+        }
+    ],
+    "repositories":[
+        {
+            "type":"composer",
+            "url":"https://wpackagist.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "johnpbloch/wordpress-core-installer": "dev-master",
+        "johnpbloch/wordpress-core": "^6.0.0",
+        "composer/installers": "2.x-dev",
+        "cweagans/composer-patches": "dev-master",
+        "leymannx/wordpress-finder": "dev-master",
+        "oomphinc/composer-installers-extender": "dev-master",
+        "vlucas/phpdotenv": "5.4.x-dev",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "wpackagist-theme/twentytwentyone": "^1.6",
+        "wpackagist-theme/twentytwenty": "^2.0",
+        "wpackagist-theme/twentytwentytwo": "^1.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "johnpbloch/wordpress-core-installer": true,
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "oomphinc/composer-installers-extender": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "extra": {
+        "installer-types": [
+            "wordpress-core",
+            "wordpress-plugin",
+            "wordpress-theme",
+            "wordpress-muplugin",
+            "wordpress-dropin"
+        ],
+        "wordpress-install-dir": "docroot",
+        "installer-paths": {
+            "docroot/": ["type:wordpress-core"],
+            "docroot/wp-content/plugins/{$name}/" : ["type:wordpress-plugin"],
+            "docroot/wp-content/themes/{$name}/"  : ["type:wordpress-theme"]
+        }
+    },
+    "autoload": {
+        "classmap": [
+            "scripts/composer/ScriptHandler.php"
+        ]
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "WordpressProject\\composer\\ScriptHandler::CreateRequiredFiles",
+            "WordpressProject\\composer\\ScriptHandler::ScaffoldProject"
+        ],
+        "post-update-cmd": [
+            "WordpressProject\\composer\\ScriptHandler::CreateRequiredFiles"
+        ]
+    }
+}

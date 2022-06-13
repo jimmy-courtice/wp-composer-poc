@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+#: exec_target = cli
+
+## Lint and test the projects' custom and source files.
+##
+## Usage: fin lint
+
+set -e
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+#-------------------------- BEGIN: Execution --------------------------------
+"${SCRIPT_PATH}/phpcs" ${PROJECT_ROOT}/${DOCROOT}/custom/themes/
+"${SCRIPT_PATH}/phpcs" ${PROJECT_ROOT}/${DOCROOT}/themes/plugins/
+#-------------------------- CLOSE: Execution --------------------------------

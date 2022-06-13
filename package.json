@@ -1,0 +1,52 @@
+{
+  "name": "wp-subtheme",
+  "version": "1.0.0",
+  "description": "Subtheme file for us in WP KIT-related projects",
+  "main": "gulpfile.js",
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/docksal/boilerplate-wordpress.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/docksal/boilerplate-wordpress/issues"
+  },
+  "homepage": "https://github.com/docksal/boilerplate-wordpress#readme",
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@wordpress/eslint-plugin": "^12.4.0",
+    "browser-sync": "^2.27.9",
+    "dart-sass": "^1.25.0",
+    "del": "^6.0.0",
+    "eslint": "^8.17.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-babel": "^8.0.0",
+    "gulp-changed": "^3.2.0",
+    "gulp-cli": "^2.1.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-dart-sass": "^1.0.2",
+    "gulp-eslint": "^6.0.0",
+    "gulp-imagemin": "^7.1.0",
+    "gulp-sass-lint": "^1.4.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "imagemin": "^8.0.1",
+    "install": "^0.13.0",
+    "jquery": "^3.6.0",
+    "merge2": "^1.4.1",
+    "npm": "^8.12.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "ie 10",
+    "ie 11"
+  ]
+}

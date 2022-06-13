@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+## Initialize stack and site (full reset)
+##
+## Usage: fin init
+
+# Abort if anything fails
+set -e
+
+#-------------------------- BEGIN: Helper functions --------------------------------
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT=${PROJECT_ROOT:-"${SCRIPT_PATH}/../../"}
+FILE=${PROJECT_ROOT}/wp-config-local.php
+
+source "${PROJECT_ROOT}/.docksal/functions.sh"
+
+#-------------------------- CLOSE: Helper functions --------------------------------
+
+#-------------------------- Execution --------------------------------
+
+# ================================================ #
+# Run project initialization and installation.     #
+# ================================================ #
+header "Project initialization"
+section=Initialization
+step=1
+
+# ================================================ #
+# Run services initialization and installation.    #
+# ================================================ #
+fin init-services
+
+# ================================================ #
+# Run dependency initialization and installation.  #
+# ================================================ #
+fin init-deps
+
+echo -e "${green_bg} DONE! ${NC}${green} Completed all initialization steps.${NC}"
+
+#-------------------------- END: Execution --------------------------------

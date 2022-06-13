@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+
+## Initialize stack and site (full reset)
+##
+## Usage: fin init
+
+# Abort if anything fails
+set -e
+
+#-------------------------- BEGIN: Helper functions --------------------------------
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT=${PROJECT_ROOT:-"${SCRIPT_PATH}/../../"}
+FILE=${PROJECT_ROOT}/wp-config-local.php
+
+source "${PROJECT_ROOT}/.docksal/functions.sh"
+
+#-------------------------- CLOSE: Helper functions --------------------------------
+
+#-------------------------- Execution --------------------------------
+
+# ================================================ #
+# Run project initialization and installation.     #
+# ================================================ #
+header "Project initialization"
+section=Initialization
+step=1
+
+# Stack initialization
+echo -e "${green_bg} Step 1 ${NC}${green} Initializing stack...${NC}"
+fin project reset -f
+
+# Start docksal project if not running.
+step_header "Starting project"
+if [[ "$RUN_AS_CI" = "true" ]]; then
+  echo-yellow "Skipping – in CI mode."
+else
+  if [[ "$DOCKER_RUNNING" == "false" ]]; then
+    echo-yellow "Starting docksal."
+    fin system start
+    echo-green "Started docksal."
+  fi
+  if test -f "$FILE";
+  then
+    fin start
+    echo-green "Validated that project is running."
+  fi
+fi
+
+# Add pre-commit hook
+step_header "Creating git pre-commit"
+if [[ "$RUN_AS_CI" = "true" ]]; then
+  echo-yellow "Skipping – in CI mode."
+else
+  PRE_COMMIT_PATH="${PROJECT_ROOT}/hooks/pre-commit"
+  GIT_DIRECTORY_PATH="${PROJECT_ROOT}/.git"
+  GIT_HOOKS_PATH="${GIT_DIRECTORY_PATH}/hooks"
+  GIT_PRE_COMMIT_PATH="${GIT_HOOKS_PATH}/pre-commit"
+  if [[ -d $GIT_DIRECTORY_PATH ]]; then
+
+    if [[ ! -d $GIT_HOOKS_PATH ]]; then
+      mkdir "$GIT_HOOKS_PATH"
+    fi
+
+    if [[ ! -d $GIT_HOOKS_PATH ]]; then
+      echo-yellow "Skipping – .git/hooks directory could not be created."
+    elif [[ -f $GIT_PRE_COMMIT_PATH ]]; then
+      echo-yellow "Skipping – pre-commit already set"
+    elif [[ ! -f $PRE_COMMIT_PATH ]]; then
+      echo-yellow "Skipping – source pre-commit file missing."
+    else
+      ln -s $PRE_COMMIT_PATH $GIT_PRE_COMMIT_PATH
+      echo-yellow "Pre-commit file created."
+    fi
+  else
+    echo-yellow "Skipping – .git directory missing."
+  fi
+fi
+
+# ================================================ #
+# Run services initialization and installation.    #
+# ================================================ #
+if [[ "$RUN_AS_CI" = "true" ]]; then
+  if [[ "$FIN_EXISTS" = "true" ]]; then
+    fin init-services ci
+  else
+    run_command init-services ci
+  fi
+else
+  fin init-services
+fi
+
+# ================================================ #
+# Run dependency initialization and installation.  #
+# ================================================ #
+if [[ "$RUN_AS_CI" = "true" ]]; then
+  if [[ "$FIN_EXISTS" = "true" ]]; then
+    fin init-deps ci
+  else
+    run_command init-deps ci
+  fi
+else
+  fin init-deps
+fi
+
+# ================================================ #
+# Run Site Install.    #
+# ================================================ #
+header "Installing/Initializing Site."
+section=Install
+step=1
+if [[ "$RUN_AS_CI" = "true" ]]; then
+  echo-yellow "Skipping – in CI mode."
+else
+step_header "Validating Site Install"
+echo -e "${green}Checking WordPress Install"
+
+if test -f "$FILE";
+then
+  echo -e "${green}WP Config exists."
+  cp $FILE ${PROJECT_ROOT}/docroot/wp-config.php
+  echo -e "${green}Installing existing site."
+#  fin db import ${PROJECT_ROOT}/site-backup/backup.sql
+  echo -e "${green}Updating DB for local Development."
+  cd docroot/
+  # Find all urls, change out local versions.
+#  fin wp search-replace [remote-url.com] [local-url.com] --all-tables
+  echo -e "${green}Copy .htaccess for local development"
+  cd ../
+#  cp htaccess-local.txt new-htaccess.txt
+#  mv new-htaccess.txt docroot/.htaccess
+else
+  echo -e "${green}No WP Config File Exists."
+  echo -e "${green}Installing new site."
+  fin init-site
+  cp ${PROJECT_ROOT}/docroot/wp-config.php ${PROJECT_ROOT}/wp-config-local.php
+  cd ${PROJECT_ROOT}/docroot
+  fin composer install
+  gulp
+fi
+fi
+
+
+echo -e "${green_bg} DONE! ${NC}${green} Completed all initialization steps.${NC}"
+
+#-------------------------- END: Execution --------------------------------
